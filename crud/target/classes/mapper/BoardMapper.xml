@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.example.work.board.model.BoardDAO">
+	<resultMap type="com.example.work.board.model.BoardVO" id="BoardMap">
+		<id property="idx" column="IDX"/>
+		<result property="title" column="TITLE"/>
+		<result property="content" column="CONTENT"/>
+		<result property="writer" column="WRITER"/>
+		<result property="pw" column="PW"/>
+		<result property="regDate" column="REG_DATE"/>
+		<result property="hit" column="HIT"/>		
+	</resultMap>
+	
+	<!-- 게시글 리스트 -->
+	<select id="boardList" resultType="BoardVO"> 
+        SELECT IDX, TITLE, CONTENT, WRITER, PW, TO_CHAR(TO_DATE(REG_DATE, 'YYYY/MM/DD')) AS REG_DATE, HIT 
+        FROM BOARD_A
+        ORDER BY IDX DESC
+     </select>
+	
+	<!-- 게시글 작성 -->
+	<insert id="insertBoard" parameterType="BoardVO">
+		INSERT INTO BOARD_A(IDX, TITLE, CONTENT, WRITER, PW, REG_DATE, HIT) 
+		VALUES (IDX.NEXTVAL, #{title}, #{content}, #{writer}, #{pw}, SYSDATE, 0)
+	</insert>
+	
+	<!-- 게시글 조회 -->
+	<select id="readBoard" parameterType="int" resultType="BoardVO"> 
+        SELECT *
+        FROM BOARD_A
+		WHERE IDX = #{idx}        
+     </select>
+     
+     <!-- 조회수 증가 -->
+     <update id="hitIncrease" parameterType="int">
+     	UPDATE BOARD_A
+     	SET HIT = HIT+1
+     	WHERE IDX = #{idx}
+     </update>
+     
+     <!-- 게시글 수정 -->
+     <update id="updateBoard" parameterType="BoardVO">
+     	UPDATE BOARD_A 
+     	SET TITLE = #{title}, CONTENT = #{content}, PW = #{pw} 
+     	WHERE IDX = #{idx}
+     </update>
+     
+     <!-- 게시글 삭제 -->
+     <delete id="deleteBoard" parameterType="int">
+     	DELETE FROM BOARD_A
+     	WHERE IDX = #{idx}
+     </delete>
+  
+</mapper>
